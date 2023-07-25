@@ -1,34 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/change_notifier.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_unity_widget/flutter_unity_widget.dart';
+import 'package:flutter_unity_widget_example/widgets/chat_text_field.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
-class SimpleScreen extends StatefulWidget {
-  const SimpleScreen({Key? key}) : super(key: key);
-
-  @override
-  State<SimpleScreen> createState() => _SimpleScreenState();
-}
-
-class _SimpleScreenState extends State<SimpleScreen> {
+class SimpleScreen extends HookWidget {
   static final GlobalKey<ScaffoldState> _scaffoldKey =
       GlobalKey<ScaffoldState>();
 
   UnityWidgetController? _unityWidgetController;
-  double _sliderValue = 0.0;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _unityWidgetController?.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
+    final _sliderValue = useState(0.0);
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -53,29 +39,35 @@ class _SimpleScreenState extends State<SimpleScreen> {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                child: PointerInterceptor(
-                  child: Card(
-                    elevation: 10,
-                    child: Column(
-                      children: <Widget>[
-                        const Padding(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Text("Rotation speed:"),
+                child: Column(
+                  children: [
+
+                    ChatTextField(onMessage: (msg) => print('msg: $msg')),
+
+                    const SizedBox(height: 10),
+                    PointerInterceptor(
+                      child: Card(
+                        elevation: 10,
+                        child: Column(
+                          children: <Widget>[
+                            const Padding(
+                              padding: EdgeInsets.only(top: 20),
+                              child: Text("Rotation speed:"),
+                            ),
+                            Slider(
+                              onChanged: (value) {
+                                _sliderValue.value = value;
+                                setRotationSpeed(value.toString());
+                              },
+                              value: _sliderValue.value,
+                              min: 0.0,
+                              max: 1.0,
+                            ),
+                          ],
                         ),
-                        Slider(
-                          onChanged: (value) {
-                            setState(() {
-                              _sliderValue = value;
-                            });
-                            setRotationSpeed(value.toString());
-                          },
-                          value: _sliderValue,
-                          min: 0.0,
-                          max: 1.0,
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ],

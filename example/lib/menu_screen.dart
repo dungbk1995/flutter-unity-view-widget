@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_unity_widget_example/widgets/chat_text_field.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
@@ -44,15 +45,23 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    int length = menus.length + 1;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Menu List'),
       ),
       body: Center(
         child: ListView.builder(
-          itemCount: menus.length,
+          itemCount: length,
+          // itemCount: menus.length,
           itemBuilder: (BuildContext context, int i) {
-            return ListTile(
+            if (i == length - 1)
+              return Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: ChatTextField(onMessage: (message) => print('$message')),
+              );
+            else
+              return ListTile(
               title: Text(menus[i].title),
               subtitle: Text(menus[i].description),
               onTap: () {
